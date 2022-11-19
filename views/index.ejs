@@ -1,3 +1,29 @@
 <%- include('header/index'); -%>
+<div class="d-flex vh-100">
+  <form class="w-50 m-auto bg-light p-5 shadow-lg rounded" method="POST" action="/isAuth">
+    <!-- Email input -->
+    <div class="form-outline mb-4">
+      <input type="text" name="username" id="username" class="form-control" />
+      <label class="form-label" for="username">Username</label>
+    </div>
 
+    <!-- Password input -->
+    <div class="form-outline mb-4">
+      <input type="password" id="password" name="password" class="form-control" />
+      <label class="form-label" for="password">Password</label>
+    </div>
+    <!-- Submit button -->
+    <button type="submit" class="btn btn-danger w-100 mb-4">
+      Sign in
+    </button>
+    <!-- Register buttons -->
+    <div class="text-center">
+      <p>Not a member? <a href="/register" class="text-danger">Register</a></p>
+      <p>Counselor?<a href="#!" class="text-danger">Login</a>/<a href="#!" class="text-danger">Register</a> </p>
+    </div>
+  </form>
+</div>
+<script>
+
+</script>
 <%- include('footer/index'); -%>

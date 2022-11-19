@@ -1,13 +1,31 @@
 body {
-    background-image: url("../images/Abstract\ Paper.svg");
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    min-height: 768px;
+  background-image: url("../images/Abstract\ Paper.svg");
+  background-position: center;
+  background-size: contain;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+
+  background-color: rgb(236, 14, 14);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(92, 18, 18);
+}
+

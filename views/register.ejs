@@ -1,0 +1,185 @@
+<%- include('header/index'); -%>
+<div class="d-flex vh-100">
+  <form
+    class="w-50 m-auto bg-light p-5 shadow-lg rounded"
+    method="POST"
+    action="/register"
+  >
+    <!-- Email input -->
+    <div class="form-outline mb-4">
+      <input
+        type="file"
+        name="img"
+        id="img"
+        accept="image/jpeg, image/png"
+        class="form-control"
+        placeholder="Image"
+        required
+      />
+    </div>
+    <div class="form-outline mb-4">
+      <input
+        type="text"
+        name="fname"
+        id="fname"
+        class="form-control"
+        required
+      />
+      <label class="form-label" for="fname">First Name</label>
+    </div>
+    <div class="form-outline mb-4">
+      <input
+        type="text"
+        name="mname"
+        id="mname"
+        class="form-control"
+        required
+      />
+      <label class="form-label" for="mname">Middle Name</label>
+    </div>
+    <div class="form-outline mb-4">
+      <input
+        type="text"
+        name="lname"
+        id="lname"
+        class="form-control"
+        required
+      />
+      <label class="form-label" for="lname">Last Name</label>
+    </div>
+    <div class="form-outline mb-4">
+      <input
+        type="date"
+        name="dob"
+        id="dob"
+        class="form-control"
+        placeholder="Date of Birth"
+        required
+      />
+    </div>
+    <div class="form-outline mb-4">
+      <select
+        class="form-select"
+        name="gender"
+        id="gender"
+        aria-label="Default select example"
+        required
+      >
+        <option selected value="O">Other</option>
+        <option value="M">Male</option>
+        <option value="F">Female</option>
+      </select>
+      <label class="form-label" for="gender">Gender</label>
+    </div>
+
+    <div class="form-outline mb-4">
+      <input
+        type="text"
+        name="username"
+        id="username"
+        class="form-control"
+        required
+      />
+      <label class="form-label" for="username">Username</label>
+    </div>
+    <!-- Password input -->
+    <div class="form-outline mb-4">
+      <input
+        type="password"
+        id="password"
+        name="password"
+        class="form-control"
+        required
+      />
+      <label class="form-label" for="password">Password</label>
+    </div>
+
+    <div class="form-outline mb-4">
+      <input
+        type="text"
+        name="occupation"
+        id="occupation"
+        class="form-control"
+        required
+      />
+      <label class="form-label" for="occupation">Ocupation</label>
+    </div>
+
+    <div class="form-outline mb-4">
+      <input
+        type="email"
+        name="email"
+        id="email"
+        class="form-control"
+        required
+      />
+      <label class="form-label" for="email">E-mail</label>
+    </div>
+    <div class="d-flex form-outline mb-4">
+      <input
+        type="tel"
+        name="contact1"
+        id="contact1"
+        class="form-control"
+        placeholder="Personal Contact"
+        required
+      />
+      <input
+        type="tel"
+        name="contact2"
+        id="contact2"
+        class="form-control"
+        placeholder="Referral Contact"
+      />
+    </div>
+    <!-- Submit button -->
+    <button type="submit" class="btn btn-danger w-100 mb-4">Sign Up</button>
+    <!-- Register buttons -->
+    <p id="error" class="text-danger text-center"><%= error %></p>
+    <div class="text-center">
+      <p>Already a member? <a href="/" class="text-danger">Login</a></p>
+      <p>
+        Counselor?<a href="#!" class="text-danger">Login</a>/<a
+          href="#!"
+          class="text-danger"
+          >Register</a
+        >
+      </p>
+    </div>
+  </form>
+</div>
+<script>
+  $("#dob").attr("max", getDate());
+  $("form").submit((e) => {
+    const formData = new FormData(e.target);
+    const pass = formData.get("password");
+    const contact1 = formData.get("contact1");
+    const contact2 = formData.get("contact2");
+    let msg = "";
+    if (pass.length < 8) {
+      msg += "Password length must be more than 7";
+    } else if (!Number(contact1) || contact1.length !== 10) {
+      msg += "Contact 1 must be Number only with 10 digits";
+    } else if (
+      contact2.length > 0 &&
+      (!Number(contact2) || contact2.length !== 10)
+    ) {
+      msg += "Contact 2 must be Number only with 10 digits";
+    } else if(formData.get("img").size > 50000) {
+      msg += "File Size must be less than 50kb";
+    }
+
+    if (msg !== "") {
+      e.preventDefault();
+      $("#error").html(msg);
+    } else {
+      $("#error").html("");
+      const reader = new FileReader();
+      reader.readAsDataURL(formData.get("img"));
+      reader.onload = () => {
+        formData.append("image", reader.result);
+      };
+    }
+  });
+</script>
+<%- include('footer/index'); -%>
