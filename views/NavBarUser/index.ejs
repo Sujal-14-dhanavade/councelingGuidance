@@ -1,0 +1,35 @@
+<nav class="bg-danger p-5 shadow-lg d-flex flex-column w-25" style="min-height: 768px;">
+  <img src="/images/logo.png" class="w-50 mx-auto"/>
+  <h3 class="text-light mb-5 mt-1 text-center">Counseling System</h3>
+  <div class="d-flex flex-row form-outline mb-4">
+    <select
+      class="form-select"
+      name="type"
+      id="type"
+      aria-label="Default select example"
+      required
+    >
+      <% type.forEach((element, idx) => { %>
+      <option value="<%=element.counselor_type%>">
+        <%=element.counselor_type%>
+      </option>
+      <% });%>
+    </select>
+    <button type="button" class="btn btn-dark">Search</button>
+  </div>
+  <h3 class="text-light fw-bold text-center my-4">Hi <%=data[0].username%></h3>
+  <ul class="nav flex-column text-center">
+    <li class="nav-item">
+      <a class="nav-link fw-bold" href="#">Account</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link fw-bold" href="#">LogOut</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link fw-bold" href="#">Reservations</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link fw-bold" href="#">Appointments</a>
+    </li>
+  </ul>
+</nav>

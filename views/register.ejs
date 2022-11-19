@@ -8,17 +8,6 @@
     <!-- Email input -->
     <div class="form-outline mb-4">
       <input
-        type="file"
-        name="img"
-        id="img"
-        accept="image/jpeg, image/png"
-        class="form-control"
-        placeholder="Image"
-        required
-      />
-    </div>
-    <div class="form-outline mb-4">
-      <input
         type="text"
         name="fname"
         id="fname"
@@ -165,8 +154,6 @@
       (!Number(contact2) || contact2.length !== 10)
     ) {
       msg += "Contact 2 must be Number only with 10 digits";
-    } else if(formData.get("img").size > 50000) {
-      msg += "File Size must be less than 50kb";
     }
 
     if (msg !== "") {
@@ -174,11 +161,6 @@
       $("#error").html(msg);
     } else {
       $("#error").html("");
-      const reader = new FileReader();
-      reader.readAsDataURL(formData.get("img"));
-      reader.onload = () => {
-        formData.append("image", reader.result);
-      };
     }
   });
 </script>

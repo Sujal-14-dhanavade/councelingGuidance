@@ -30,3 +30,20 @@ footer {
   background: rgb(92, 18, 18);
 }
 
+.nav-link{
+  color: #f1f1f1;
+}
+
+.nav-link:visited {
+  color: #f1f1f1;
+}
+
+.nav-link:active {
+  color: antiquewhite;
+}
+
+.nav-link:hover {
+  background-color: #f1f1f1;
+  color: rgb(236, 14, 14);
+}
+

@@ -80,7 +80,7 @@ app
     });
   })
   .post((req, res) => {
-    const query = `select registerUser('${req.body.fname}', '${req.body.mname}', '${req.body.lname}', '${req.body.dob}', '${req.body.gender}', '${req.body.username}', '${req.body.password}', '${req.body.occupation}', '${req.body.email}', '${req.body.image}')`;
+    const query = `select registerUser('${req.body.fname}', '${req.body.mname}', '${req.body.lname}', '${req.body.dob}', '${req.body.gender}', '${req.body.username}', '${req.body.password}', '${req.body.occupation}', '${req.body.email}')`;
     connection.query(query, async (err, result) => {
       const errCode = Object.values(result[0])[0];
       if (errCode === 1) {
@@ -157,7 +157,7 @@ app
     );
   })
   .post((req, res) => {
-    const query = `select registerCounselor('${req.body.fname}', '${req.body.mname}', '${req.body.lname}', '${req.body.dob}', '${req.body.gender}', '${req.body.type}', '${req.body.username}','${req.body.password}', '${req.body.degree}', '${req.body.email}', '${req.body.image}', '${req.body.exp}')`;
+    const query = `select registerCounselor('${req.body.fname}', '${req.body.mname}', '${req.body.lname}', '${req.body.dob}', '${req.body.gender}', '${req.body.type}', '${req.body.username}','${req.body.password}', '${req.body.degree}', '${req.body.email}', '${req.body.exp}')`;
     connection.query(query, async (err, result) => {
       console.log(err);
       const errCode = Object.values(result[0])[0];
@@ -180,12 +180,23 @@ app
 
 app.route("/Dashboard/:role").get((req, res) => {
   if (req.session.isAuth && _.lowerCase(req.params.role) === "user") {
-    res.send("logged in");
+    connection.query(
+      "select type_id, counselor_type from type_counselor",
+      (err, result) => {
+        res.render("dashboardUser", {
+          data: req.session.data,
+          type: result
+        })
+      }
+    );
+    
   } else if (
     req.session.isAuthCounselor &&
     _.lowerCase(req.params.role) === "counselor"
   ) {
-    res.send("logged in Counselor");
+    res.render("dashboardCounselor", {
+      data: req.session.data
+    })
   } else {
     res.redirect("/");
   }

@@ -9,17 +9,6 @@
     <!-- Email input -->
     <div class="form-outline mb-4">
       <input
-        type="file"
-        name="img"
-        id="img"
-        accept="image/jpeg, image/png"
-        class="form-control"
-        placeholder="Image"
-        required
-      />
-    </div>
-    <div class="form-outline mb-4">
-      <input
         type="text"
         name="fname"
         id="fname"
@@ -165,21 +154,13 @@
     let msg = "";
     if (pass.length < 8) {
       msg += "Password length must be more than 7";
-    } else if (formData.get("img").size > 50000) {
-      msg += "File Size must be less than 50kb";
     }
 
     if (msg !== "") {
       e.preventDefault();
-      console.log(formData.get("type"));
       $("#error").html(msg);
     } else {
       $("#error").html("");
-      const reader = new FileReader();
-      reader.readAsDataURL(formData.get("img"));
-      reader.onload = () => {
-        formData.append("image", reader.result);
-      };
     }
   });
 </script>
