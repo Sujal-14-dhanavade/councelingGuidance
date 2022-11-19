@@ -27,7 +27,9 @@ app.set("view engine", "ejs");
 
 // requests
 app.get("/", (request, response) => {
-  response.render("index");
+  response.render("index", {
+    Name: "Surojeet"
+  });
 });
 
 const server = app.listen(port, () => {
@@ -36,7 +38,7 @@ const server = app.listen(port, () => {
 
 // handles abrupt disconnection
 process.on("SIGINT", (_) => {
-  appServer.close(() => {
+  server.close(() => {
     console.log("server closed :- reason -> interrupted");
     connection.end();
     process.exit(0);
@@ -49,7 +51,7 @@ process.on("SIGINT", (_) => {
 
 // handled graceful disconnection
 process.on("SIGTERM", (_) => {
-  appServer.close(() => {
+  server.close(() => {
     console.log("server closed properly");
     connection.end();
     process.exit(0);

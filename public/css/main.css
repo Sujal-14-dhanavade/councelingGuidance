@@ -1,0 +1,13 @@
+body {
+    background-image: url("../images/Abstract\ Paper.svg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 768px;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
