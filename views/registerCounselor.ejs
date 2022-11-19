@@ -1,9 +1,10 @@
 <%- include('header/index'); -%>
-<div class="d-flex vh-100">
+<div class="d-flex flex-column vh-100">
+  <h1 class="text-center text-danger p-5">Counselor Portal!!</h1>
   <form
     class="w-50 m-auto bg-light p-5 shadow-lg rounded"
     method="POST"
-    action="/register"
+    action="/registerCounselor"
   >
     <!-- Email input -->
     <div class="form-outline mb-4">
@@ -71,7 +72,20 @@
       </select>
       <label class="form-label" for="gender">Gender</label>
     </div>
-
+    <div class="form-outline mb-4">
+      <select
+        class="form-select"
+        name="type"
+        id="type"
+        aria-label="Default select example"
+        required
+      >
+        <% type.forEach((element, idx) => { %>
+          <option value='<%=element.counselor_type%>' > <%=element.counselor_type%></option>
+        <% });%>
+      </select>
+      <label class="form-label" for="gender">Type of Counselor</label>
+    </div>
     <div class="form-outline mb-4">
       <input
         type="text"
@@ -97,12 +111,12 @@
     <div class="form-outline mb-4">
       <input
         type="text"
-        name="occupation"
-        id="occupation"
+        name="degree"
+        id="degree"
         class="form-control"
         required
       />
-      <label class="form-label" for="occupation">Ocupation</label>
+      <label class="form-label" for="degree">Degree</label>
     </div>
 
     <div class="form-outline mb-4">
@@ -115,32 +129,26 @@
       />
       <label class="form-label" for="email">E-mail</label>
     </div>
-    <div class="d-flex form-outline mb-4">
+    <div class="form-outline mb-4">
       <input
-        type="tel"
-        name="contact1"
-        id="contact1"
+        type="number"
+        name="exp"
+        id="exp"
         class="form-control"
-        placeholder="Personal Contact"
+        value="0"
         required
       />
-      <input
-        type="tel"
-        name="contact2"
-        id="contact2"
-        class="form-control"
-        placeholder="Referral Contact"
-      />
+      <label class="form-label" for="exp" >Experience in Years</label>
     </div>
     <!-- Submit button -->
     <button type="submit" class="btn btn-danger w-100 mb-4">Sign Up</button>
     <!-- Register buttons -->
     <p id="error" class="text-danger text-center"><%= error %></p>
     <div class="text-center">
-      <p>Already a member? <a href="/" class="text-danger">Login</a></p>
+      <p>Already a Counselor? <a href="/loginCounselor" class="text-danger">Login</a></p>
       <p>
-        Counselor?<a href="/loginCounselor" class="text-danger">Login</a>/<a
-          href="/registerCounselor"
+        User?<a href="/" class="text-danger">Login</a>/<a
+          href="/register"
           class="text-danger"
           >Register</a
         >
@@ -153,24 +161,17 @@
   $("form").submit((e) => {
     const formData = new FormData(e.target);
     const pass = formData.get("password");
-    const contact1 = formData.get("contact1");
-    const contact2 = formData.get("contact2");
+    
     let msg = "";
     if (pass.length < 8) {
       msg += "Password length must be more than 7";
-    } else if (!Number(contact1) || contact1.length !== 10) {
-      msg += "Contact 1 must be Number only with 10 digits";
-    } else if (
-      contact2.length > 0 &&
-      (!Number(contact2) || contact2.length !== 10)
-    ) {
-      msg += "Contact 2 must be Number only with 10 digits";
-    } else if(formData.get("img").size > 50000) {
+    } else if (formData.get("img").size > 50000) {
       msg += "File Size must be less than 50kb";
     }
 
     if (msg !== "") {
       e.preventDefault();
+      console.log(formData.get("type"));
       $("#error").html(msg);
     } else {
       $("#error").html("");

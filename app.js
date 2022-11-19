@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParse = require("body-parser");
 const ejs = require("ejs");
 const mysql = require("mysql2");
+const _ = require("lodash");
 const session = require("express-session");
 
 const connection = mysql.createConnection({
@@ -34,48 +35,157 @@ app.use(bodyParse.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
 // requests
-app.get("/", (req, res) => {
-  res.render("index");
-});
 
-app.get("/register", (req, res) => {
-  res.render("register", {
-    error: "",
-  });
-});
 
-app.post("/register", (req, res) => {
-  const query = `select registerUser('${req.body.fname}', '${req.body.mname}', '${req.body.lname}', '${req.body.dob}', '${req.body.gender}', '${req.body.username}', '${req.body.password}', '${req.body.occupation}', '${req.body.email}', '${req.body.image}')`;
-  connection.query(query, async (err, result) => {
-    const errCode = Object.values(result[0])[0];
-    if (errCode === 1) {
-      req.session.isAuth = true;
-      connection.query(
-        `select * from patient where username = '${req.body.username}' and password = '${req.body.password}'`,
-        (err, result) => {
-          req.session.data = result;
-          connection.query(
-            `select addContact(${req.session.data[0].patient_id}, '${req.body.contact1}')`
-          );
-          if (req.body.contact2) {
-            connection.query(
-              `select addContact(${req.session.data[0].patient_id}, '${req.body.contact2}')`
-            );
+/* 
+  login route for user
+*/
+app
+  .route("/")
+  .get((req, res) => {
+    res.render("index", {
+      error: "",
+    });
+  })
+  .post((req, res) => {
+    const query = `select loginUser('${req.body.username}', '${req.body.password}')`;
+    connection.query(query, (err, result) => {
+      const errCode = Object.values(result[0])[0];
+      if (errCode === 1) {
+        req.session.isAuth = true;
+        connection.query(
+          `select * from patient where username = '${req.body.username}' and password = '${req.body.password}'`,
+          (err, result) => {
+            req.session.data = result;
+            res.redirect("/Dashboard/user");
           }
-          res.redirect("/Dashboard");
-        }
-      );
-    } else {
-      res.render("register", {
-        error: "Username or Email already registered",
-      });
-    }
+        );
+      } else {
+        res.render("index", {
+          error: "Username or Password wrong",
+        });
+      }
+    });
   });
-});
 
-app.get("/Dashboard", (req, res) => {
-  if(req.session.isAuth) {
+
+/*
+  register route for user
+*/
+app
+  .route("/register")
+  .get((req, res) => {
+    res.render("register", {
+      error: "",
+    });
+  })
+  .post((req, res) => {
+    const query = `select registerUser('${req.body.fname}', '${req.body.mname}', '${req.body.lname}', '${req.body.dob}', '${req.body.gender}', '${req.body.username}', '${req.body.password}', '${req.body.occupation}', '${req.body.email}', '${req.body.image}')`;
+    connection.query(query, async (err, result) => {
+      const errCode = Object.values(result[0])[0];
+      if (errCode === 1) {
+        req.session.isAuth = true;
+        connection.query(
+          `select * from patient where username = '${req.body.username}' and password = '${req.body.password}'`,
+          (err, result) => {
+            req.session.data = result;
+            connection.query(
+              `select addContact(${req.session.data[0].patient_id}, '${req.body.contact1}')`
+            );
+            if (req.body.contact2) {
+              connection.query(
+                `select addContact(${req.session.data[0].patient_id}, '${req.body.contact2}')`
+              );
+            }
+            res.redirect("/Dashboard/user");
+          }
+        );
+      } else {
+        res.render("register", {
+          error: "Username or Email already registered",
+        });
+      }
+    });
+  });
+
+
+/* 
+  login route for counselor
+*/
+app
+  .route("/loginCounselor")
+  .get((req, res) => {
+    res.render("loginCounselor", {
+      error: "",
+    });
+  })
+  .post((req, res) => {
+    const query = `select loginCounselor('${req.body.username}', '${req.body.password}')`;
+    connection.query(query, (err, result) => {
+      const errCode = Object.values(result[0])[0];
+      if (errCode === 1) {
+        req.session.isAuthCounselor = true;
+        connection.query(
+          `select * from counselor where username = '${req.body.username}' and password = '${req.body.password}'`,
+          (err, result) => {
+            req.session.data = result;
+            res.redirect("/Dashboard/counselor");
+          }
+        );
+      } else {
+        res.render("loginCounselor", {
+          error: "Username or Password wrong",
+        });
+      }
+    });
+  });
+
+/* 
+  register a counselor
+*/
+app
+  .route("/registerCounselor")
+  .get((req, res) => {
+    connection.query(
+      "select counselor_type from type_counselor",
+      (err, result) => {
+        res.render("registerCounselor", {
+          error: "",
+          type: result,
+        });
+      }
+    );
+  })
+  .post((req, res) => {
+    const query = `select registerCounselor('${req.body.fname}', '${req.body.mname}', '${req.body.lname}', '${req.body.dob}', '${req.body.gender}', '${req.body.type}', '${req.body.username}','${req.body.password}', '${req.body.degree}', '${req.body.email}', '${req.body.image}', '${req.body.exp}')`;
+    connection.query(query, async (err, result) => {
+      console.log(err);
+      const errCode = Object.values(result[0])[0];
+      if (errCode === 1) {
+        req.session.isAuthCounselor = true;
+        connection.query(
+          `select * from counselor where username = '${req.body.username}' and password = '${req.body.password}'`,
+          (err, result) => {
+            req.session.data = result;
+            res.redirect("/Dashboard/counselor");
+          }
+        );
+      } else {
+        res.render("registerCounselor", {
+          error: "Username or Email already registered",
+        });
+      }
+    });
+  });
+
+app.route("/Dashboard/:role").get((req, res) => {
+  if (req.session.isAuth && _.lowerCase(req.params.role) === "user") {
     res.send("logged in");
+  } else if (
+    req.session.isAuthCounselor &&
+    _.lowerCase(req.params.role) === "counselor"
+  ) {
+    res.send("logged in Counselor");
   } else {
     res.redirect("/");
   }
