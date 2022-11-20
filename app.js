@@ -230,7 +230,7 @@ app.route("/Dashboard/:role/:page").get((req, res) => {
           );
         } else if (_.lowerCase(req.params.page) === "reservation") {
           connection.query(
-            `select p.first_name, p.middle_name, p.last_name,c.*, r.*, res.* from counseling c join patient p join reservation r join reason res where c.patient_id = p.patient_id and c.reservation_id = r.reservation_id and res.reason_id = r.reason_id and c.patient_id = ${req.session.data[0].patient_id}`,
+            `select p.first_name, p.middle_name, p.last_name,c.*, r.*, res.* from counseling c join counselor p join reservation r join reason res where c.counselor_id = p.counselor_id and c.reservation_id = r.reservation_id and res.reason_id = r.reason_id and c.patient_id = ${req.session.data[0].patient_id}`,
             (err, search) => {
               res.render("dashboardUser", {
                 data: req.session.data,
@@ -267,6 +267,7 @@ app.route("/Dashboard/:role/:page").get((req, res) => {
       connection.query(
         `select p.first_name, p.middle_name, p.last_name,c.*, r.*, res.* from counseling c join patient p join reservation r join reason res where c.patient_id = p.patient_id and c.reservation_id = r.reservation_id and res.reason_id = r.reason_id and c.counselor_id = ${req.session.data[0].counselor_id}`,
         (err, search) => {
+          console.log(err);
           res.render("dashboardCounselor", {
             data: req.session.data,
             page: "appointment",
@@ -298,6 +299,7 @@ app.route("/Dashboard/:role/:page").get((req, res) => {
 
 app.route("/book").post((req, res) => {
   connection.query(`select booking(${req.session.data[0].patient_id}, ${Number(req.body.counselor)},"${req.body.dateReserve}", "${req.body.reason}", "${req.body.desc}")`, (err, result) => {
+    console.log(err);
     const errCode = Object.values(result[0])[0];
     if(errCode === 1) {
       res.json({success: true});

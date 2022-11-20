@@ -31,15 +31,15 @@
       <p class="my-3"><%=data[0].counselor_type%></p>
       <p class="my-3"><%=data[0].degree%></p>
       <p class="my-3"><%=data[0].experience_years%></p>
-      <% if(data[0].counselor_level >= 0 && data[0].counselor_level < 1) {%>
+      <% if(data[0].counselor_level === 1) {%>
         <p class="my-3">Bronze</p>
-      <% }else if(data[0].counselor_level >= 1 && data[0].counselor_level < 2) {%>
+      <% }else if(data[0].counselor_level === 2) {%>
         <p class="my-3">Silver</p>
-      <% }else if(data[0].counselor_level >= 2 && data[0].counselor_level < 3) {%>
+      <% }else if(data[0].counselor_level === 3) {%>
         <p class="my-3">Gold</p>
-      <% }else if(data[0].counselor_level >= 3 && data[0].counselor_level < 4) {%>
+      <% }else if(data[0].counselor_level === 4) {%>
         <p class="my-3">Platinum</p>
-      <% }else if(data[0].counselor_level >= 4 && data[0].counselor_level <= 5) {%>
+      <% }else if(data[0].counselor_level === 5) {%>
         <p class="my-3">Diamond</p>
       <% } %> 
       <p class="my-3"><%=data[0].email%></p>

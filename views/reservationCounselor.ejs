@@ -5,7 +5,7 @@
     <% if(search.length === 0){%>
         <h5>No Result Found</h5>
     <%} else {%>
-        <%search.forEach(element => { %>
+        <%search.forEach((element, idx) => { %>
             <div class="card text-danger mt-3">
                 <h5 class="card-header"><%=element.first_name%> <%=element.middle_name%> <%=element.last_name%></h5>
                 <div class="d-flex flex-column p-1">
@@ -71,20 +71,22 @@
                     </div> 
                 <% } %>
                 <% if(element.status === "completed"){%>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Details
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse text-start p-5" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                            <p>Your message: <span class="fw-normal"><%= element.counselor_msg %></span> </p>
-                            <p>Your Advice: <span class="fw-normal"><%= element.strategic_Adv %></span> </p>
-                            <p>Video Link: <span class="fw-normal"><%= element.video_record %></span> </p>
+                    <div class="accordion" id=<%="acc"+idx + "1" %> >
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target=<%="#" + "acc" + idx + "1"  + "collapsetwo"%> aria-expanded="true" aria-controls="collapseOne">
+                                    Details
+                                </button>
+                            </h2>
+                            <div id=<%="acc" + idx + "1" + "collapsetwo"%> class="accordion-collapse collapse text-start p-5" aria-labelledby="headingOne" data-bs-parent=<%= "#" + "acc" + idx + "1"%>>
+                                <p>Your message: <span class="fw-normal"><%= element.counselor_msg %></span> </p>
+                                <p>Your Advice: <span class="fw-normal"><%= element.strategic_Adv %></span> </p>
+                                <p>Video Link: <span class="fw-normal"><%= element.video_record %></span> </p>
+                            </div>
                         </div>
-                    </div>               
-                </div>
-            <% } %>
+                    </div>                
+                <% } %>
+            </div>
         <%}); %>
     <% } %> 
 </div>
