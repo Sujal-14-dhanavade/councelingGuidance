@@ -13,8 +13,14 @@ const connection = mysql.createConnection({
   password: process.env.DB_PASS,
   database: "counselingsystem",
 });
-
-connection.connect();
+connection.connect(() => {
+  console.log("database connected");
+  setInterval(() => {
+    connection.query("call updateLevel()", () => {
+      console.log("updated");
+    });
+  }, 5 * 60 * 1000);
+});
 
 // app
 const app = express();
@@ -36,7 +42,6 @@ app.set("view engine", "ejs");
 
 // requests
 
-
 /* 
   login route for user
 */
@@ -57,7 +62,7 @@ app
           `select * from patient where username = '${req.body.username}' and password = '${req.body.password}'`,
           (err, result) => {
             req.session.data = result;
-            res.redirect("/Dashboard/user");
+            res.redirect("/Dashboard/user/home");
           }
         );
       } else {
@@ -67,7 +72,6 @@ app
       }
     });
   });
-
 
 /*
   register route for user
@@ -97,7 +101,7 @@ app
                 `select addContact(${req.session.data[0].patient_id}, '${req.body.contact2}')`
               );
             }
-            res.redirect("/Dashboard/user");
+            res.redirect("/Dashboard/user/home");
           }
         );
       } else {
@@ -107,7 +111,6 @@ app
       }
     });
   });
-
 
 /* 
   login route for counselor
@@ -126,10 +129,10 @@ app
       if (errCode === 1) {
         req.session.isAuthCounselor = true;
         connection.query(
-          `select * from counselor where username = '${req.body.username}' and password = '${req.body.password}'`,
+          `select * from counselor join type_counselor where counselor.type_id = type_counselor.type_id and username = '${req.body.username}' and password = '${req.body.password}'`,
           (err, result) => {
             req.session.data = result;
-            res.redirect("/Dashboard/counselor");
+            res.redirect("/Dashboard/counselor/home");
           }
         );
       } else {
@@ -157,17 +160,16 @@ app
     );
   })
   .post((req, res) => {
-    const query = `select registerCounselor('${req.body.fname}', '${req.body.mname}', '${req.body.lname}', '${req.body.dob}', '${req.body.gender}', '${req.body.type}', '${req.body.username}','${req.body.password}', '${req.body.degree}', '${req.body.email}', '${req.body.exp}')`;
+    const query = `select registerCounselor('${req.body.fname}', '${req.body.mname}', '${req.body.lname}', '${req.body.dob}', '${req.body.gender}', '${req.body.type}', '${req.body.username}','${req.body.password}', "${req.body.degree}", '${req.body.email}', '${req.body.exp}')`;
     connection.query(query, async (err, result) => {
-      console.log(err);
       const errCode = Object.values(result[0])[0];
       if (errCode === 1) {
         req.session.isAuthCounselor = true;
         connection.query(
-          `select * from counselor where username = '${req.body.username}' and password = '${req.body.password}'`,
+          `select * from counselor join type_counselor where counselor.type_id = type_counselor.type_id and username = '${req.body.username}' and password = '${req.body.password}'`,
           (err, result) => {
             req.session.data = result;
-            res.redirect("/Dashboard/counselor");
+            res.redirect("/Dashboard/counselor/home");
           }
         );
       } else {
@@ -178,28 +180,156 @@ app
     });
   });
 
-app.route("/Dashboard/:role").get((req, res) => {
+app.route("/Dashboard/:role/:page").get((req, res) => {
   if (req.session.isAuth && _.lowerCase(req.params.role) === "user") {
     connection.query(
       "select type_id, counselor_type from type_counselor",
       (err, result) => {
-        res.render("dashboardUser", {
-          data: req.session.data,
-          type: result
-        })
+        if (_.lowerCase(req.params.page) === "home") {
+          res.render("dashboardUser", {
+            data: req.session.data,
+            type: result,
+            page: "home",
+          });
+        } else if (_.lowerCase(req.params.page) === "account") {
+          res.render("dashboardUser", {
+            data: req.session.data,
+            type: result,
+            page: "account",
+          });
+        } else if (_.lowerCase(req.params.page) === "book") {
+          res.render("dashboardUser", {
+            data: req.session.data,
+            type: result,
+            page: "book",
+            counselor: req.query.counselor 
+          });
+        } else if (_.lowerCase(req.params.page) === "search") {
+          connection.query(
+            `select * from counselor_data where counselor_type='${req.query.search}'`,
+            (err, search) => {
+              res.render("dashboardUser", {
+                data: req.session.data,
+                type: result,
+                page: "search",
+                search: search,
+              });
+            }
+          );
+        } else if (_.lowerCase(req.params.page) === "appointment") {
+          connection.query(
+            `select p.first_name, p.middle_name, p.last_name,c.*, r.*, res.* from counseling c join counselor p join reservation r join reason res where c.counselor_id = p.counselor_id and c.reservation_id = r.reservation_id and res.reason_id = r.reason_id and c.patient_id = ${req.session.data[0].patient_id}`,
+            (err, search) => {
+              res.render("dashboardUser", {
+                data: req.session.data,
+                page: "appointment",
+                type: result,
+                search: search,
+              });
+            }
+          );
+        } else if (_.lowerCase(req.params.page) === "reservation") {
+          connection.query(
+            `select p.first_name, p.middle_name, p.last_name,c.*, r.*, res.* from counseling c join patient p join reservation r join reason res where c.patient_id = p.patient_id and c.reservation_id = r.reservation_id and res.reason_id = r.reason_id and c.patient_id = ${req.session.data[0].patient_id}`,
+            (err, search) => {
+              res.render("dashboardUser", {
+                data: req.session.data,
+                page: "reservation",
+                type: result,
+                search: search,
+              });
+            }
+          );
+        } else {
+          res.render("dashboardUser", {
+            data: req.session.data,
+            type: result,
+            page: "error",
+          });
+        }
       }
     );
-    
   } else if (
     req.session.isAuthCounselor &&
     _.lowerCase(req.params.role) === "counselor"
   ) {
-    res.render("dashboardCounselor", {
-      data: req.session.data
-    })
+    if (_.lowerCase(req.params.page) === "home") {
+      res.render("dashboardCounselor", {
+        data: req.session.data,
+        page: "home",
+      });
+    } else if (_.lowerCase(req.params.page) === "account") {
+      res.render("dashboardCounselor", {
+        data: req.session.data,
+        page: "account",
+      });
+    } else if (_.lowerCase(req.params.page) === "appointment") {
+      connection.query(
+        `select p.first_name, p.middle_name, p.last_name,c.*, r.*, res.* from counseling c join patient p join reservation r join reason res where c.patient_id = p.patient_id and c.reservation_id = r.reservation_id and res.reason_id = r.reason_id and c.counselor_id = ${req.session.data[0].counselor_id}`,
+        (err, search) => {
+          res.render("dashboardCounselor", {
+            data: req.session.data,
+            page: "appointment",
+            search: search,
+          });
+        }
+      );
+    } else if (_.lowerCase(req.params.page) === "reservation") {
+      connection.query(
+        `select p.first_name, p.middle_name, p.last_name,c.*, r.*, res.* from counseling c join patient p join reservation r join reason res where c.patient_id = p.patient_id and c.reservation_id = r.reservation_id and res.reason_id = r.reason_id and c.counselor_id = ${req.session.data[0].counselor_id}`,
+        (err, search) => {
+          res.render("dashboardCounselor", {
+            data: req.session.data,
+            page: "reservation",
+            search: search,
+          });
+        }
+      );
+    } else {
+      res.render("dashboardCounselor", {
+        data: req.session.data,
+        page: "error",
+      });
+    }
   } else {
     res.redirect("/");
   }
+});
+
+app.route("/book").post((req, res) => {
+  connection.query(`select booking(${req.session.data[0].patient_id}, ${Number(req.body.counselor)},"${req.body.dateReserve}", "${req.body.reason}", "${req.body.desc}")`, (err, result) => {
+    const errCode = Object.values(result[0])[0];
+    if(errCode === 1) {
+      res.json({success: true});
+    } else {
+      res.json({success: false})
+    }
+  })
+  
+});
+
+app.route("/setLink").post((req, res) => {
+  connection.query(`call setLink(${req.body.reservation}, "${req.body.link}" , "${req.body.time}:00")`, (err, result) => {
+    res.json({success: true});
+  })
+})
+
+app.route("/setAdvice").post((req, res) => {
+  connection.query(`call setAdvice(${req.body.patient},${req.session.data[0].counselor_id},${req.body.reservation}, "${req.body.msg}" ,  "${req.body.adv}" , "${req.body.link}")`, (err, result) => {
+    res.json({success: true});
+  })
+})
+
+app.route("/giveReview").post((req, res) => {
+  connection.query(`call giveReview(${req.body.reservation}, ${req.body.rating} , "${req.body.review}")`, (err, result) => {
+    console.log(err);
+    res.json({success: true});
+  })
+})
+
+app.route("/logout").get((req, res) => {
+  req.session.destroy();
+  res.redirect("/");
 });
 
 const server = app.listen(port, () => {

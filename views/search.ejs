@@ -1,0 +1,56 @@
+<div
+  class="d-flex flex-column bg-transparent rounded p-5 text-dark text-center fw-bold w-50 mx-auto my-5 shadow-lg"
+>
+    <h1>Search Results</h1>
+    <% if(search.length === 0){%>
+        <h5>No Result Found</h5>
+    <%} else {%>
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Description
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body fw-normal">
+                    <%=search[0].description_type%>
+                </div>
+            </div>
+            </div>
+        </div>
+        <%search.forEach(element => { %>
+            <div class="card text-danger mt-3">
+                <h5 class="card-header"><%=element.first_name%> <%=element.middle_name%> <%=element.last_name%></h5>
+                <div class="d-flex p-1">
+                    <%if(element.gender === "M"){%>
+                        <img src="/images/avatar.svg" class="w-25 mx-3  card-img-top"/>
+                        <% }else{%>
+                        <img src="/images/favatar.svg" class="w-25 mx-3 card-img-top"/>
+                    <% } %>
+                    <div class="card-body text-start me-3">
+                        <h5 class="card-title"><%=element.counselor_type %></h5>
+                        <p class="card-text">Qualification: <em class="fw-normal"><%=element.degree %></em></p>
+                        <p class="card-text">Experience: <span class="fw-normal"><%=element.experience_years %></span></p>
+                        <% if(element.counselor_level >= 0 && element.counselor_level < 1) {%>
+                            <p class="card-text">Bronze</p>
+                        <% }else if(element.counselor_level >= 1 && element.counselor_level < 2) {%>
+                            <p class="card-text">Silver</p>
+                        <% }else if(element.counselor_level >= 2 && element.counselor_level < 3) {%>
+                            <p class="card-text">Gold</p>
+                        <% }else if(element.counselor_level >= 3 && element.counselor_level < 4) {%>
+                            <p class="card-text">Platinum</p>
+                        <% }else if(element.counselor_level >= 4 && element.counselor_level <= 5) {%>
+                            <p class="card-text">Diamond</p>
+                        <% } %>
+                        <form action="/Dashboard/user/book" method="get">
+                            <input type="hidden" name="counselor" value=<%=element.counselor_id%> /> 
+                            <button type="submit" class="btn btn-danger">Book</button>
+                        </form>  
+                    </div>
+                </div>             
+            </div>
+        <%}); %>
+    <% } %> 
+
+</div>

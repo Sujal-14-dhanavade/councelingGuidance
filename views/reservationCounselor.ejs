@@ -1,0 +1,112 @@
+<div
+  class="d-flex flex-column bg-transparent rounded p-5 text-dark text-center fw-bold w-50 mx-auto my-5 shadow-lg"
+>
+    <h1>Reservations</h1>
+    <% if(search.length === 0){%>
+        <h5>No Result Found</h5>
+    <%} else {%>
+        <%search.forEach(element => { %>
+            <div class="card text-danger mt-3">
+                <h5 class="card-header"><%=element.first_name%> <%=element.middle_name%> <%=element.last_name%></h5>
+                <div class="d-flex flex-column p-1">
+                    <div class="card-body text-start me-3">
+                        <h5>#<%=element.reservation_id%> </h5>
+                    </div>
+                    <div class="card-body text-start me-3">
+                        <h6 class="card-title"><%=element.reason %></h6>
+                        <p class="card-body fw-normal" style="font-size: 0.8rem;"><%=element.descript%></p>
+                    </div>
+                    <div class="card-body text-start me-3">
+                        <p>Status: <span class="fw-normal"><%= element.status %></span> </p>
+                        <p>Date: <span class="fw-normal"><%= element.date_reserve %></span> </p>
+                        <% if(element.rating){%> 
+                        <p>Rating: <span class="fw-normal"><%= element.rating %></span> </p>
+                        <% } %>
+                        <% if(element.patient_review){%> 
+                        <p>Review: <span class="fw-normal"><%= element.patient_review %></span> </p>
+                        <% } %>  
+                        <% if(element.time_reserve){%> 
+                        <p>Time: <span class="fw-normal"><%= element.time_reserve %></span> </p>
+                        <% } %>
+                        <% if(element.meeting_link){%> 
+                        <p>Link: <span class="fw-normal"><%= element.meeting_link %></span> </p>
+                        <% } %> 
+                    </div>
+                </div>
+                <% if(! element.meeting_link) {%> 
+                    <div class="accordion" id=<%="acc"+idx %> >
+                        <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target=<%= "#" + "acc" + idx + "1" + "collapseone"%> aria-expanded="true" aria-controls="collapseOne">
+                                Set Time and Meeting Link
+                            </button>
+                        </h2>
+                        <div id=<%="acc" + idx + "1" + "collapseone"%> class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent=<%="#" + "acc"+idx %>>
+                            <form class="accordian-form p-5">
+                                <div class="form-outline mb-4">
+                                    <input
+                                      type="time"
+                                      name="time"
+                                      id="time"
+                                      class="form-control"
+                                      required
+                                    />
+                                    <label class="form-label" for="dateReserve">Time of Reservation</label>
+                                </div>
+                                <div class="form-outline mb-4">
+                                    <input
+                                      type="text"
+                                      name="link"
+                                      id="link"
+                                      class="form-control"
+                                      required
+                                    />
+                                    <label class="form-label" for="dateReserve">Meeting Link</label>
+                                </div>
+                                <input type="hidden" value=<%=element.reservation_id%> name="reservation"/>
+                                <button type="submit" class="btn btn-danger w-100">Set</button>
+                            </form>
+                        </div>
+                        </div>
+                    </div> 
+                <% } %>
+                <% if(element.status === "completed"){%>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Details
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse text-start p-5" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <p>Your message: <span class="fw-normal"><%= element.counselor_msg %></span> </p>
+                            <p>Your Advice: <span class="fw-normal"><%= element.strategic_Adv %></span> </p>
+                            <p>Video Link: <span class="fw-normal"><%= element.video_record %></span> </p>
+                        </div>
+                    </div>               
+                </div>
+            <% } %>
+        <%}); %>
+    <% } %> 
+</div>
+<script>
+    $(".accordian-form").submit((e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = {
+            time: formData.get("time"),
+            link: formData.get("link"),
+            reservation: formData.get("reservation"),
+        }
+        $.ajax({
+            url: "/setLink",
+            type: "POST",
+            data: data,
+            dataType: "json",
+            success: (res) => {
+                if(res.success) {
+                    window.location.href = "/Dashboard/counselor/home";
+                }
+            }
+        })
+    });
+</script>

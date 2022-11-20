@@ -1,6 +1,21 @@
 <%- include('header/index'); -%>
 <div class="d-flex flex-row" style="min-height: 768px;">
     <%- include('NavBarUser/index') %> 
+    <%if (page === "home") {%>
+        <%- include('home'); -%>
+    <% }else if(page === "account") { %> 
+        <%- include('account'); -%>
+    <% }else if(page === "book") { %> 
+        <%- include('book'); -%>
+    <% }else if(page === "appointment"){ %>    
+        <%- include('appointmentUser'); -%>
+    <% }else if(page === "reservation"){ %>
+        <%- include('reservationUser'); -%>
+    <% }else if(page === "search"){ %>
+        <%- include('search'); -%>
+    <% }else{ %>
+        <div class="bg-light rounded container p-5 text-center fw-bold w-50 m-auto shadow-lg">Error Not Found</div>
+    <% } %> 
 </div>
 
 <%- include('footer/index'); -%>

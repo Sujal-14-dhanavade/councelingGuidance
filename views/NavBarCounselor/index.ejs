@@ -1,0 +1,25 @@
+<nav
+  class="bg-danger p-5 shadow-lg d-flex flex-column w-25"
+  style="min-height: 768px"
+>
+  <a class="navbar-brand" href="/Dashboard/counselor/home">
+    <img src="/images/logo.png" class="w-50 mx-auto" />
+    <h3 class="text-light mb-5 mt-1 text-center">Counseling System</h3>
+  </a>
+
+  <h3 class="text-light fw-bold text-center my-4">Welcome <%=data[0].username%></h3>
+  <ul class="nav flex-column text-center">
+    <li class="nav-item">
+      <a class="nav-link fw-bold" href="/Dashboard/counselor/account">Account</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link fw-bold" href="/logout">LogOut</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link fw-bold" href="/Dashboard/counselor/reservation">Reservations</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link fw-bold" href="/Dashboard/counselor/appointment">Appointments</a>
+    </li>
+  </ul>
+</nav>

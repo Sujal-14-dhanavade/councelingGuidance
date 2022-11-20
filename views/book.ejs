@@ -1,0 +1,77 @@
+<div
+  class="d-flex flex-column bg-light rounded p-5 text-dark text-center fw-bold w-50 mx-auto my-5 shadow-lg"
+>
+    <h1>Reservations</h1>
+    <form class="text-start mt-4" method="POST" act>
+        <div class="form-outline mb-4">
+            <input
+              type="date"
+              name="dateReserve"
+              id="dateReserve"
+              class="form-control"
+              required
+            />
+            <label class="form-label" for="dateReserve">Date of Reservation</label>
+        </div>
+        <div class="form-outline mb-4">
+            <input
+              type="text"
+              name="Reason"
+              id="Reason"
+              class="form-control"
+              placeholder="..in 50 characters"
+              required
+            />
+            <label class="form-label" for="Reason">Reason</label>
+        </div>
+        <div class="form-outline mb-4">
+            <textarea name="desc"
+            id="desc"
+            class="form-control" rows="10" style="resize: none;">..in 500 characters</textarea>
+            <label class="form-label" for="desc">Describe your issue</label>
+        </div>
+        <p class="text-center text-danger" id="error"></p>
+        <input type="hidden" value=<%=counselor%> name="counselor"/>
+        <button type="submit" class="btn btn-danger w-100">Book</button>
+    </form>
+</div>
+<script>
+    $("#dateReserve").attr("min", getDate());
+    $("form").submit((e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const reason = formData.get("Reason");
+        const desc = formData.get("desc");
+        let msg = "";
+        if (reason.length > 50) {
+            msg += "Reason should be less or equal to 50 characters";
+        } else if(desc.length > 500) {
+            msg += "Description should be less or equal to 500 characters";
+        }
+
+        if (msg !== "") {
+            $("#error").html(msg);
+        } else {
+            $("#error").html("success");
+            const data = {
+                counselor: formData.get("counselor"),
+                dateReserve: formData.get("dateReserve"),
+                reason: formData.get("Reason"),
+                desc: formData.get("desc")
+            }
+            $.ajax({
+                url: "/book",
+                type: "POST",
+                data: data,
+                dataType: "json",
+                success: (res) => {
+                    if(! res.success) {
+                        $("#error").html("No slots available on that date");
+                    } else {
+                        window.location.href = "/Dashboard/user/home";
+                    }
+                }
+            })
+        }
+    });
+</script>

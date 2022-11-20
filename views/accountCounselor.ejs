@@ -1,0 +1,48 @@
+<div
+  class="d-flex flex-column justify-content-between align-items-center bg-light rounded p-5 text-danger text-center fw-bold w-50 mx-auto my-5 shadow-lg"
+>
+  <h1>Account</h1>
+  <%if(data[0].gender === "M"){%>
+  <img src="/images/avatar.svg" class="w-25 mx-auto my-3"/>
+  <% }else{%>
+  <img src="/images/favatar.svg" class="w-25 mx-auto my-3"/>
+  <% } %>
+  <div class="d-flex">
+    <div class="bg-danger text-white text-center p-5 shadow-lg">
+      <p class="my-3">Name</p>
+      <p class="my-3">CounselorId</p>
+      <p class="my-3">Date of Birth</p>
+      <p class="my-3">Gender</p>
+      <p class="my-3">Username</p>
+      <p class="my-3">Counselor</p>
+      <p class="my-3">Qualification</p>
+      <p class="my-3">Experience</p>
+      <p class="my-3">Level</p>
+      <p class="my-3">Email</p>
+    </div>
+    <div class="bg-light text-danger text-center p-5 shadow-lg">
+      <p class="my-3">
+        <%=data[0].first_name%> <%=data[0].middle_name%> <%=data[0].last_name%>
+      </p>
+      <p class="my-3"><%=data[0].counselor_id%></p>
+      <p class="my-3"><%=data[0].dob%></p>
+      <p class="my-3"><%=data[0].gender%></p>
+      <p class="my-3"><%=data[0].username%></p>
+      <p class="my-3"><%=data[0].counselor_type%></p>
+      <p class="my-3"><%=data[0].degree%></p>
+      <p class="my-3"><%=data[0].experience_years%></p>
+      <% if(data[0].counselor_level >= 0 && data[0].counselor_level < 1) {%>
+        <p class="my-3">Bronze</p>
+      <% }else if(data[0].counselor_level >= 1 && data[0].counselor_level < 2) {%>
+        <p class="my-3">Silver</p>
+      <% }else if(data[0].counselor_level >= 2 && data[0].counselor_level < 3) {%>
+        <p class="my-3">Gold</p>
+      <% }else if(data[0].counselor_level >= 3 && data[0].counselor_level < 4) {%>
+        <p class="my-3">Platinum</p>
+      <% }else if(data[0].counselor_level >= 4 && data[0].counselor_level <= 5) {%>
+        <p class="my-3">Diamond</p>
+      <% } %> 
+      <p class="my-3"><%=data[0].email%></p>
+    </div>
+  </div>
+</div>
